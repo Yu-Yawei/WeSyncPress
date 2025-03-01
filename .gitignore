@@ -1,0 +1,25 @@
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore editor/IDE files
+.vscode/
+.idea/
+
+# Ignore logs & temp files
+logs/
+*.log
+*.tmp
+
+# Ignore build artifacts
+build/
+dist/
+*.exe
+
+# Ignore personal configuration files
+config.ini
+*.csv
