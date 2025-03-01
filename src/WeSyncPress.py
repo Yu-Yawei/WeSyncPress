@@ -125,6 +125,11 @@ def extract_article():
         messagebox.showerror("Error", "未找到文章内容！")
         return
 
+    if MEDIA_SRC.startswith("http://") or MEDIA_SRC.startswith("https://"):
+        media_src_type = "URL"
+    else:
+        media_src_type = "local path"
+
     # Extract CSS styles
     css_styles = ""
     css_styles += """
@@ -148,7 +153,11 @@ def extract_article():
             css_filename = os.path.join(OUTPUT_FOLDER, os.path.basename(css_link))
             with open(css_filename, "w", encoding="utf-8") as css_file:
                 css_file.write(css_response.text)
-            css_styles += f'\n<link rel="stylesheet" href="{MEDIA_SRC}{os.path.basename(css_link)}">\n'
+            if media_src_type == "URL":
+                css_path = urljoin(MEDIA_SRC, os.path.basename(css_link))
+            else:
+                css_path = os.path.join(MEDIA_SRC, os.path.basename(css_link))
+            css_styles += f'\n<link rel="stylesheet" href="{css_path}">\n'
         else:
             # messagebox.showerror(f"Failed to download CSS: {full_css_url}")
             messagebox.showerror("Error", f"无法下载CSS文件: {full_css_url}")
@@ -180,7 +189,10 @@ def extract_article():
                 with open(img_path, "wb") as img_file:
                     img_file.write(img_response.content)
                 # Update image path in HTML
-                img_tag["src"] = MEDIA_SRC + img_filename
+                if media_src_type == "URL":
+                    img_tag["src"] = urljoin(MEDIA_SRC, img_filename)
+                else:
+                    img_tag["src"] = os.path.join(MEDIA_SRC, img_filename)
                 image_count += 1
             else:
                 # messagebox.showerror(f"Failed to download image: {full_img_url}")
